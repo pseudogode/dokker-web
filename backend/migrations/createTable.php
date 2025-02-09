@@ -1,15 +1,14 @@
 <?php
 
-require_once '../logger/Logger.php';
+require_once __DIR__ . '/../logger/Logger.php';
 
-$config = include '../configurations/DBconfig.php';
+$config = include __DIR__ . '/../configurations/DBconfig.php';
 
 $dbname = $config['dbname'];
 $usersTable = 'users';
 
 $connection = new mysqli($config['servername'], $config['username'], $config['password']);
 
-// Check connection
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 }
