@@ -54,4 +54,4 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
 const form = document.getElementById("login-form");
 const formContainer = document.getElementById("form-container");
 
-loginForm.addEventListener("submit", onSubmitHandler(form, formContainer));
+form.addEventListener("submit", onSubmitHandler(form, formContainer));
