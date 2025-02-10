@@ -1,17 +1,17 @@
-const SUCCESS = 'success';
-const ERROR = 'error';
-const TOKEN_KEY = 'token';
+const SUCCESS = "success";
+const ERROR = "error";
+const TOKEN_KEY = "token";
 
 const onSubmitHandler = (form, formContainer) => async (event) => {
   event.preventDefault();
   const data = new FormData(event.target);
   const formDataObject = Object.fromEntries(data);
-  
+
   try {
-    const res = await fetch('../../backend/login.php', {
-      method: 'POST',   
+    const res = await fetch("../../backend/login.php", {
+      method: "POST",
       headers: {
-          'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(formDataObject),
     });
@@ -21,23 +21,23 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
     if (status === SUCCESS) {
       localStorage.setItem(TOKEN_KEY, token);
       setTimeout(() => {
-        window.location.href = '../dashboard/index.html'; 
+        window.location.href = "../dashboard/index.html";
       }, 2000);
       return;
     }
 
     if (status === ERROR) {
-      const messageContainerId = 'message-container';
+      const messageContainerId = "message-container";
       let messageContainer = document.getElementById(messageContainerId);
       if (!messageContainer) {
-        messageContainer = document.createElement('div');
-        messageContainer.setAttribute('id', messageContainerId);
+        messageContainer = document.createElement("div");
+        messageContainer.setAttribute("id", messageContainerId);
         formContainer.appendChild(messageContainer);
       }
 
       let messageElement = messageContainer.children[0];
       if (!messageElement) {
-        messageElement = document.createElement('p');
+        messageElement = document.createElement("p");
       }
 
       messageElement.innerText = message;
@@ -45,14 +45,13 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
       return;
     }
 
-    throw new Error('Unexpected server response', status);
-
-  } catch(error) {
-    console.trace(error, 'Error on submitting form data');
+    throw new Error("Unexpected server response", status);
+  } catch (error) {
+    console.trace(error, "Error on submitting form data");
   }
-}
+};
 
-const form = document.getElementById('login-form');
-const formContainer = document.getElementById('form-container');
+const form = document.getElementById("login-form");
+const formContainer = document.getElementById("form-container");
 
-loginForm.addEventListener('submit', onSubmitHandler(form, formContainer));
+loginForm.addEventListener("submit", onSubmitHandler(form, formContainer));
