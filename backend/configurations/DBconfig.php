@@ -1,6 +1,6 @@
 <?php
 return [
-    'servername' => '127.0.0.1',
+    'servername' => 'localhost',
     'username' => 'root',
     'password' => '',
     'dbname' => 'web_docker_interface'
