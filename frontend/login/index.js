@@ -1,4 +1,4 @@
-import { TOKEN_KEY } from '../shared/constants.js';
+import { showErrorMessage, parseJson } from '../shared/functions.js';
 
 const SUCCESS = 'success';
 const ERROR = 'error';
@@ -7,6 +7,10 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
   event.preventDefault();
   const data = new FormData(event.target);
   const formDataObject = Object.fromEntries(data);
+
+  const messageContainerId = 'message-container';
+  const showError = (message) =>
+    showErrorMessage(formContainer, messageContainerId, message);
 
   try {
     const res = await fetch('../../backend/login.php', {
@@ -17,10 +21,9 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
       body: JSON.stringify(formDataObject),
     });
 
-    const { status, message, token } = res.json();
+    const { status, message } = parseJson(res);
 
     if (status === SUCCESS) {
-      localStorage.setItem(TOKEN_KEY, token);
       setTimeout(() => {
         window.location.href = '../dashboard/index.html';
       }, 2000);
@@ -28,33 +31,17 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
     }
 
     if (status === ERROR) {
-      const messageContainerId = 'message-container';
-      let messageContainer = document.getElementById(messageContainerId);
-      if (!messageContainer) {
-        messageContainer = document.createElement('div');
-        messageContainer.setAttribute('id', messageContainerId);
-        formContainer.appendChild(messageContainer);
-      }
-
-      let messageElement = messageContainer.children[0];
-      if (!messageElement) {
-        messageElement = document.createElement('p');
-      }
-
-      messageElement.innerText = message;
+      showError(message);
       form.reset();
       return;
     }
 
     throw new Error('Unexpected server response', status);
   } catch (error) {
-    console.trace(error, 'Error on submitting form data');
-    // <TEST> Simulate login
-    localStorage.setItem(TOKEN_KEY, 'test');
-    setTimeout(() => {
-      window.location.href = '../dashboard/index.html';
-    }, 2000);
-    // </TEST>
+    const errorMessage =
+      error?.message ?? 'Error on submitting login form data';
+    showError(errorMessage);
+    console.trace(error);
   }
 };
 

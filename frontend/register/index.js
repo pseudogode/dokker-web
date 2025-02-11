@@ -1,46 +1,38 @@
+import { showErrorMessage, parseJson } from '../shared/functions.js';
+
 const SUCCESS = 'success';
 const ERROR = 'error';
-const TOKEN_KEY = 'token';
-
-// TODO: Cleanup copy pasta
 
 const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
   event.preventDefault();
+
   const data = new FormData(event.target);
   const formDataObject = Object.fromEntries(data);
+
   const messageContainerId = 'message-container';
-  let messageContainer = document.getElementById(messageContainerId);
+  const showError = (message) =>
+    showErrorMessage(formContainer, messageContainerId, message);
 
   if (formDataObject.password !== formDataObject.confirmPassword) {
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.setAttribute('id', messageContainerId);
-      formContainer.appendChild(messageContainer);
-    }
-
-    let messageElement = messageContainer.children[0];
-    if (!messageElement) {
-      messageElement = document.createElement('p');
-      messageContainer.appendChild(messageElement);
-    }
-    messageElement.innerText = 'Passwords do not match.';
+    showError('Passwords do not match');
     form.reset();
     return;
   }
 
   try {
+    const { confirmPassword, ...rest } = formDataObject;
     const res = await fetch('../../backend/register.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formDataObject),
+      body: JSON.stringify(rest),
     });
 
-    const { status, message, token } = await res.json();
+    console.log('res', res);
+    const { status, message } = await parseJson(res);
 
     if (status === SUCCESS) {
-      localStorage.setItem(TOKEN_KEY, token);
       setTimeout(() => {
         window.location.href = '../dashboard/index.html';
       }, 2000);
@@ -48,46 +40,17 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
     }
 
     if (status === ERROR) {
-      if (!messageContainer) {
-        messageContainer = document.createElement('div');
-        messageContainer.setAttribute('id', messageContainerId);
-        formContainer.appendChild(messageContainer);
-      }
-
-      let messageElement = messageContainer.children[0];
-      if (!messageElement) {
-        messageElement = document.createElement('p');
-        messageContainer.appendChild(messageElement);
-      }
-
-      messageElement.innerText = message;
+      showError(message);
       form.reset();
       return;
     }
 
-    throw new Error('Unexpected server response', status);
+    throw new Error('Unexpected server response');
   } catch (error) {
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.setAttribute('id', messageContainerId);
-      console.log('formContainer', formContainer);
-      formContainer.appendChild(messageContainer);
-    }
-
-    let messageElement = messageContainer.children[0];
-    if (!messageElement) {
-      messageElement = document.createElement('p');
-      messageContainer.appendChild(messageElement);
-    }
-    const errorMessage = 'Error on submitting registration form data';
-    messageElement.innerText = error?.message ?? errorMessage;
-    console.trace(error, errorMessage);
-    // <TEST> Simulate registration
-    localStorage.setItem(TOKEN_KEY, 'test');
-    setTimeout(() => {
-      window.location.href = '../dashboard/index.html';
-    }, 2000);
-    // </TEST>
+    const errorMessage =
+      error?.message ?? 'Error on submitting registration form data';
+    showError(errorMessage);
+    console.trace(error);
   }
 };
 
