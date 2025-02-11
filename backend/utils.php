@@ -9,10 +9,11 @@ function jsonResponse($data, $statusCode = SUCCESS) {
 
 function hasActiveSession(): bool 
 {
-    if (!$_REQUEST['token']) {
+    if (!getSessionIdFromHeader()) {
         return false;
     }
 
+    $connection = getDbConnection();
     $tableName = 'sessions';
     $prepStatement = $connection->prepare("SELECT id, expiry FROM $tableName WHERE token = ?");
     $prepStatement->bind_param("s", $_REQUEST['token']);
@@ -42,7 +43,7 @@ function validateSession(): void
         ], 401);
     }
 
-
+    $connection = getDbConnection();
     $tableName = 'sessions';
     $prepStatement = $connection->prepare("SELECT id, expiry FROM $tableName WHERE token = ?");
     $prepStatement->bind_param("s", $token);
@@ -81,18 +82,20 @@ function validateSession(): void
 
 function getSessionIdFromHeader() {
     $headers = getallheaders();
-    return $headers['SessionId'] ?? null;
+    return $headers['X-Session-Id'] ?? null;
 }
 
-function generateSessionId(): string
+function generateSessionId($user_id): string
 {
+    $connection = getDbConnection();
     $sessionId = generateUuidV4();
     $expiry = time() + TOKEN_VALID_TIME;
     
     $sessionsTable = 'sessions';
-    $get = $connection->prepare("INSERT INTO $sessionsTable (user_id, token, expiry) VALUES (:user_id, :token, :expiry)");
-    $stmt->execute(['user_id' => $userId, 'token' => $token, 'expiry' => $expiry]);
+    $statement = $connection->prepare("INSERT INTO $sessionsTable (user_id, token, expiry) VALUES (:user_id, :token, :expiry)");
+    $statement->execute(['user_id' => $userId, 'sessionId' => $sessionId, 'expiry' => $expiry]);
     
+    return $sessionId;
 }
 
 function generateUuidV4() {

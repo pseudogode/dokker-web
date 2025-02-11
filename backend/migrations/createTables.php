@@ -25,6 +25,7 @@ $usersTable = 'users';
 $table_sql = "CREATE TABLE IF NOT EXISTS $usersTable (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
     pass_hash VARCHAR(255) NOT NULL
 )";
 if ($connection->query($table_sql) === TRUE) {
@@ -33,11 +34,12 @@ if ($connection->query($table_sql) === TRUE) {
     echo "Error creating table $usersTable: " . $connection->error . PHP_EOL;
 }
 
+// create sessions
 $sessionsTable = 'sessions';
 $table_sql = "CREATE TABLE IF NOT EXISTS $sessionsTable (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    token VARCHAR(100) NOT NULL UNIQUE,
+    session_id VARCHAR(100) NOT NULL UNIQUE,
     expiry INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES $usersTable(id) ON DELETE CASCADE
 )";

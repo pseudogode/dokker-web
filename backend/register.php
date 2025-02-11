@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 $bodyJSON = file_get_contents('php://input');
 $body = json_decode($bodyJSON, true);
 
-if (!$body['email'] || !$body['password']) {
+if (!$body['email'] || !$body['username'] || !$body['password']) {
     jsonResponse([
         'status' => ERROR,
         'message' => 'Missing data',
@@ -29,35 +29,24 @@ if (hasActiveSession())
 $connection = getDbConnection();
 
 $email = trim($body['email']);
+$username = trim($body['username']);
 $password = trim($body['password']);
+$hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-$getUserStatement = $connection->prepare("SELECT id, pass_hash FROM users WHERE email = ?");
-$getUserStatement->bind_param("s", $email);
-$getUserStatement->execute();
-$getUserStatement->store_result();
+$query = "INSERT INTO users (email, username, pass_hash) VALUES (?, ?, ?)";
+$statement = $connection->prepare($query);
+$statement->bind_param("sss", $email, $username, $hashedPassword);
 
-if ($getUserStatement->num_rows == 0) {
+if (! $statement->execute()) {
     jsonResponse([
         'status' => ERROR,
-        'message' => 'User not found',
-    ], 400);
+        "message" => "Error creating user"
+    ], 500);
 }
 
-$getUserStatement->bind_result($user_id, $stored_hash);
-$getUserStatement->fetch();
-
-if (! password_verify($password, $stored_hash)) {
-    jsonResponse([
-        'status' => ERROR,
-        'message' => 'Wrong password',
-    ], 400);
-}
-
-$getUserStatement->close();
+$statement->close();
 $connection->close();
-
-$sessionId = generateSessionId($user_id);
 
 jsonResponse([
     'status' => SUCCESS,
-]);
+], 201);
