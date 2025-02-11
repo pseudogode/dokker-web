@@ -37,11 +37,11 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
     }
 
     throw new Error('Unexpected server response');
-  } catch (error) {
+  } catch (err) {
     const errorMessage =
-      error?.message ?? 'Error on submitting login form data';
+      err?.message ?? 'Error on submitting login form data';
     showError(errorMessage);
-    console.trace(error);
+    console.error(err);
   }
 };
 

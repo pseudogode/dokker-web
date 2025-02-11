@@ -39,8 +39,9 @@ export const parseJson = async (response) => {
     const json = JSON.parse(text);
     return json;
   } catch (err) {
+    console.error(err, text);
     throw new Error(
-      `Server response is not in json format: "${text.slice(0, 16)}.."`
+      'Server response is not in json format'
     );
   }
 };
