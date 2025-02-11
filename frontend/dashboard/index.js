@@ -1,4 +1,4 @@
-const TOKEN_KEY = 'token'; // TODO: export and share constant with login
+import { TOKEN_KEY } from '../shared/constants.js';
 
 const renderHeaderNavigation = () => {
   const navigationContainer = document.getElementById('navigation-container');

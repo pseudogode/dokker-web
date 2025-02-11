@@ -1,6 +1,7 @@
+import { TOKEN_KEY } from '../shared/constants.js';
+
 const SUCCESS = 'success';
 const ERROR = 'error';
-const TOKEN_KEY = 'token';
 
 const onSubmitHandler = (form, formContainer) => async (event) => {
   event.preventDefault();

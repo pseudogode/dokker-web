@@ -23,7 +23,7 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
       messageElement = document.createElement('p');
       messageContainer.appendChild(messageElement);
     }
-    messageElement.innerText = "Passwords do not match.";
+    messageElement.innerText = 'Passwords do not match.';
     form.reset();
     return;
   }
@@ -94,4 +94,7 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
 const registerForm = document.getElementById('register-form');
 const registerFormContainer = document.getElementById('form-container');
 
-registerForm.addEventListener('submit', onRegisterSubmitHandler(registerForm, registerFormContainer));
+registerForm.addEventListener(
+  'submit',
+  onRegisterSubmitHandler(registerForm, registerFormContainer)
+);
