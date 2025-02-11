@@ -21,7 +21,7 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
       body: JSON.stringify(formDataObject),
     });
 
-    const { status, message } = parseJson(res);
+    const { status, message } = await parseJson(res);
 
     if (status === SUCCESS) {
       setTimeout(() => {
@@ -36,7 +36,7 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
       return;
     }
 
-    throw new Error('Unexpected server response', status);
+    throw new Error('Unexpected server response');
   } catch (error) {
     const errorMessage =
       error?.message ?? 'Error on submitting login form data';

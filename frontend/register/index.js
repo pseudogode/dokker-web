@@ -29,7 +29,6 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
       body: JSON.stringify(rest),
     });
 
-    console.log('res', res);
     const { status, message } = await parseJson(res);
 
     if (status === SUCCESS) {
