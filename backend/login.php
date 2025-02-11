@@ -1,6 +1,4 @@
 <?php
-
-$connection = include __DIR__ . '/configurations/DBconfig.php';
 require_once __DIR__ . '/constants.php'; 
 require_once __DIR__ . '/utils.php';
 
@@ -22,9 +20,11 @@ if (hasActiveSession())
 {
     jsonResponse([
         'status' => SUCCESS,
-        'token' => $_POST['token']
+        'sessionId' => $_POST['sessionId']
     ]);
 }
+
+$connection = getDbConnection();
 
 $username = trim($_POST['username']);
 $password = trim($_POST['password']);
@@ -55,15 +55,9 @@ if (! password_verify($password, $stored_hash)) {
 $getUserStatement->close();
 $connection->close();
 
-$token = generateToken();
-$expiry = time() + (60 * 60 * 24); // Token valid for 24 hours
-
-// Store in database
-$get = $pdo->prepare("INSERT INTO sessions (user_id, token, expiry) VALUES (:user_id, :token, :expiry)");
-$stmt->execute(['user_id' => $userId, 'token' => $token, 'expiry' => $expiry]);
+$sessionId = generateSessionId();
 
 jsonResponse([
-  'status' => SUCCESS,
-  'message' => 'Valid login',
-  'token' => 
+    'status' => SUCCESS,
+    'sessionId' => $sessionId,
 ]);
