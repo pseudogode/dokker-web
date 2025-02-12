@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/constants.php'; 
-require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/../../utils/constants.php'; 
+require_once __DIR__ . '/../../utils/utils.php';
 
 session_start();
 header('Content-Type: application/json');
