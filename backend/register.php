@@ -40,12 +40,28 @@ $query = "INSERT INTO users (email, username, pass_hash) VALUES (?, ?, ?)";
 $statement = $connection->prepare($query);
 $statement->bind_param("sss", $email, $username, $hashedPassword);
 
-if (! $statement->execute()) {
-    jsonResponse([
-        'status' => ERROR,
-        "message" => "Error creating user"
-    ], 500);
+try {
+    if (! $statement->execute()) {
+        jsonResponse([
+            'status' => ERROR,
+            "message" => "Error creating user"
+        ], 500);
+    }
+} catch (mysqli_sql_exception $e) {
+    // duplicate entry
+    if ($e->getCode() == 1062) { 
+        jsonResponse([
+            'status' => ERROR,
+            'message' => 'Username or email is taken'
+        ], 400);
+    } else {
+        jsonResponse([
+            'status' => ERROR,
+            'message' => 'Something went wrong'
+        ], 500);
+    }
 }
+
 $_SESSION['user_id'] = $connection->insert_id;
 
 $statement->close();
