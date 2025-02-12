@@ -30,9 +30,9 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
     const { status, message } = await parseJson(res);
 
     if (status === SUCCESS) {
-      // setTimeout(() => {
-      //   window.location.href = '../dashboard/index.html';
-      // }, 2000);
+      setTimeout(() => {
+        window.location.href = '../dashboard/index.html';
+      }, 2000);
       return;
     }
 

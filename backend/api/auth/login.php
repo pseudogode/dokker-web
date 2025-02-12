@@ -29,12 +29,6 @@ session_set_cookie_params([
 ]);
 session_start();
 
-if (isset($_SESSION['user_id'])) {
-    jsonResponse([
-        'status' => SUCCESS,
-    ]);
-}
-
 $connection = getDbConnection();
 
 $email = trim($body['email']);
@@ -61,6 +55,8 @@ if (! password_verify($password, $stored_hash)) {
         'message' => 'Wrong password',
     ], 400);
 }
+
+$_SESSION['user_id'] = $user_id;
 
 $getUserStatement->close();
 $connection->close();
