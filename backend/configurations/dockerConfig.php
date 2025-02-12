@@ -1,4 +1,5 @@
 <?php
 return [
-    'url' => 'http://localhost:2375/containers/json',
+    'url' => 'http://host.docker.internal:2375/',
+    
 ];
