@@ -1,4 +1,4 @@
-.header-container {
+.navigation-container {
   display: flex;
   justify-content: end;
   flex-direction: row-reverse;
@@ -6,7 +6,7 @@
   border: 2px solid black;
 }
 
-.header-container > * {
+.navigation-container > * {
   margin: 8px;
 }
 

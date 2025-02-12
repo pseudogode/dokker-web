@@ -1,7 +1,7 @@
 import { parseJson } from './functions.js';
 import { SUCCESS, API_AUTH_PREFIX } from './constants.js';
 
-const renderLogOutButton = (navigationContainer) => {
+export const renderLogOutButton = (navigationContainer) => {
   const logOutButton = document.createElement('button');
   logOutButton.textContent = 'Log out';
   logOutButton.addEventListener('click', async () => {
@@ -33,7 +33,7 @@ const renderLogOutButton = (navigationContainer) => {
   navigationContainer.appendChild(logOutButton);
 };
 
-const renderRegisterAndLoginButtons = (navigationContainer) => {
+export const renderRegisterAndLoginButtons = (navigationContainer) => {
   const loginButton = document.createElement('button');
   loginButton.textContent = 'Login';
   const loginAnchor = document.createElement('a');
@@ -50,31 +50,3 @@ const renderRegisterAndLoginButtons = (navigationContainer) => {
   navigationContainer.appendChild(loginAnchor);
 }
 
-export const renderHeader = async (navigationContainerId) => {
-  const navigationContainer = document.getElementById(navigationContainerId);
-  navigationContainer.classList.add('flex-container');
-
-  try {
-    const res = await fetch(`../../${API_AUTH_PREFIX}status.php`, {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    const { status } = await parseJson(res);
-
-    if (!status) {
-      throw new Error('Unexpected server response: "status" is missing');
-    }
-
-    if (status !== SUCCESS) {
-      throw new Error('Not logged in.');
-    }
-    renderLogOutButton(navigationContainer);
-  } catch (error) {
-    console.error(error?.message ?? 'Error fetching auth status:');
-    renderRegisterAndLoginButtons(navigationContainer);
-  }
-};
