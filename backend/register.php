@@ -19,12 +19,15 @@ if (!$body['email'] || !$body['username'] || !$body['password']) {
     ], 400);
 }
 
-if (hasActiveSession())
-{
-    jsonResponse([
-        'status' => SUCCESS,
-    ]);
-}
+session_set_cookie_params([
+    'lifetime' => TOKEN_VALID_TIME,
+    'path' => '/', // Available across the whole site
+    'domain' => '', // Default (useful for subdomains if needed)
+    'secure' => true, // Only send over HTTPS
+    'httponly' => true, // Prevent JavaScript access (XSS protection)
+    'samesite' => 'Strict' // CSRF protection (or 'Lax' for more flexibility)
+]);
+session_start();
 
 $connection = getDbConnection();
 
@@ -43,6 +46,7 @@ if (! $statement->execute()) {
         "message" => "Error creating user"
     ], 500);
 }
+$_SESSION['user_id'] = $connection->insert_id;
 
 $statement->close();
 $connection->close();

@@ -19,8 +19,9 @@ if (!$body['email'] || !$body['password']) {
     ], 400);
 }
 
-if (hasActiveSession())
-{
+session_start();
+
+if (isset($_SESSION['user_id'])) {
     jsonResponse([
         'status' => SUCCESS,
     ]);
@@ -55,8 +56,6 @@ if (! password_verify($password, $stored_hash)) {
 
 $getUserStatement->close();
 $connection->close();
-
-$sessionId = generateSessionId($user_id);
 
 jsonResponse([
     'status' => SUCCESS,
