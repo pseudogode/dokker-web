@@ -1,5 +1,5 @@
-import { parseJson } from './functions.js';
-import { SUCCESS, API_AUTH_PREFIX } from './constants.js';
+import { parseJson } from '../shared/utils.js';
+import { SUCCESS, API_AUTH_PREFIX } from '../shared/constants.js';
 
 export const renderLogOutButton = (navigationContainer) => {
   const logOutButton = document.createElement('button');

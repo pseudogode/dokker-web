@@ -1,18 +1,22 @@
-import { showErrorMessage, parseJson } from '../shared/functions.js';
+import { parseJson } from '../shared/utils.js';
 import { API_AUTH_PREFIX, ERROR, SUCCESS } from '../shared/constants.js';
 
-const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
+const ERROR_MESSAGE_CONTAINER_ID = 'message-container';
+
+const onRegisterSubmitHandler = (form) => async (event) => {
   event.preventDefault();
 
   const data = new FormData(event.target);
   const formDataObject = Object.fromEntries(data);
 
-  const messageContainerId = 'message-container';
-  const showError = (message) =>
-    showErrorMessage(formContainer, messageContainerId, message);
+  const messageContainer = document.getElementById(ERROR_MESSAGE_CONTAINER_ID);
+
+  const showMessage = (message) => {
+    messageContainer.innerHTML = `<p>${message}</p>`;
+  }
 
   if (formDataObject.password !== formDataObject.confirmPassword) {
-    showError('Passwords do not match');
+    showMessage('Passwords do not match');
     form.reset();
     return;
   }
@@ -30,6 +34,7 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
     const { status, message } = await parseJson(res);
 
     if (status === SUCCESS) {
+      showMessage('Success! Redirecting...');
       setTimeout(() => {
         window.location.href = '../dashboard/index.html';
       }, 2000);
@@ -37,7 +42,7 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
     }
 
     if (status === ERROR) {
-      showError(message);
+      showMessage(message);
       form.reset();
       return;
     }
@@ -46,15 +51,14 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
   } catch (err) {
     const errorMessage =
       err?.message ?? 'Error on submitting registration form data';
-    showError(errorMessage);
+    showMessage(errorMessage);
     console.error(err);
   }
 };
 
 const registerForm = document.getElementById('register-form');
-const registerFormContainer = document.getElementById('form-container');
 
 registerForm.addEventListener(
   'submit',
-  onRegisterSubmitHandler(registerForm, registerFormContainer)
+  onRegisterSubmitHandler(registerForm)
 );

@@ -1,14 +1,18 @@
-import { showErrorMessage, parseJson } from '../shared/functions.js';
+import { parseJson } from '../shared/utils.js';
 import { API_AUTH_PREFIX, ERROR, SUCCESS } from '../shared/constants.js';
 
-const onSubmitHandler = (form, formContainer) => async (event) => {
+const ERROR_MESSAGE_CONTAINER_ID = 'message-container';
+
+const onSubmitHandler = (form) => async (event) => {
   event.preventDefault();
   const data = new FormData(event.target);
   const formDataObject = Object.fromEntries(data);
 
-  const messageContainerId = 'message-container';
-  const showError = (message) =>
-    showErrorMessage(formContainer, messageContainerId, message);
+  const messageContainer = document.getElementById(ERROR_MESSAGE_CONTAINER_ID);
+
+  const showMessage = (message) => {
+    messageContainer.innerHTML = `<p>${message}</p>`;
+  }
 
   try {
     const res = await fetch(`../../${API_AUTH_PREFIX}login.php`, {
@@ -22,6 +26,7 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
     const { status, message } = await parseJson(res);
 
     if (status === SUCCESS) {
+      showMessage('Success! Redirecting...');
       setTimeout(() => {
         window.location.href = '../dashboard/index.html';
       }, 2000);
@@ -29,7 +34,7 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
     }
 
     if (status === ERROR) {
-      showError(message);
+      showMessage(message);
       form.reset();
       return;
     }
@@ -38,12 +43,11 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
   } catch (err) {
     const errorMessage =
       err?.message ?? 'Error on submitting login form data';
-    showError(errorMessage);
+    showMessage(errorMessage);
     console.error(err);
   }
 };
 
 const form = document.getElementById('login-form');
-const formContainer = document.getElementById('form-container');
 
-form.addEventListener('submit', onSubmitHandler(form, formContainer));
+form.addEventListener('submit', onSubmitHandler(form));

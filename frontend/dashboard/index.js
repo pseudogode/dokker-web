@@ -1,12 +1,17 @@
-import { renderRegisterAndLoginButtons, renderLogOutButton } from '../shared/header.js';
+import { renderRegisterAndLoginButtons, renderLogOutButton } from './header.js';
 import { authWrapper } from '../shared/auth.js';
-import { getAllContainersMock, mapContainerStateToClass } from '../mock/getAllContainers.js';
+import { mapContainerStateToClass } from '../containers/container-utils.js';
+import { containerService } from '../containers/containers-service.js';
 
 const NAVIGATION_CONTAINER_ID = 'navigation-container';
 const MAIN_SECTION_ID = 'main-section';
 
-const renderDContainersList = (containerElement) => {
-  getAllContainersMock().map(({Names, Id, Image, Status, State }) => {
+const renderDContainersList = async (containerElement) => {
+  const { containers } = await containerService.getAllContainers();
+
+  if (!containers) return;
+
+  containers.map(({Names, Id, Image, Status, State }) => {
     const pill = document.createElement('div');
     pill.classList.add('pill', 'container-pill');
     pill.innerHTML = `

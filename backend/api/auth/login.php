@@ -52,7 +52,7 @@ $getUserStatement->fetch();
 if (! password_verify($password, $stored_hash)) {
     jsonResponse([
         'status' => ERROR,
-        'message' => 'Wrong password',
+        'message' => 'Invalid credentials',
     ], 400);
 }
 
