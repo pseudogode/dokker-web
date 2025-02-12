@@ -8,7 +8,7 @@ function jsonResponse($data, $statusCode = 200) {
 }
 
 function getDbConnection() {
-    $config = include __DIR__ . '/configurations/DBconfig.php';
+    $config = include __DIR__ . '/../configurations/DBconfig.php';
 
     $dbname = $config['dbname'];
     $usersTable = 'users';
