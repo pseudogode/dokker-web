@@ -19,6 +19,14 @@ if (!$body['email'] || !$body['password']) {
     ], 400);
 }
 
+session_set_cookie_params([
+    'lifetime' => TOKEN_VALID_TIME,
+    'path' => '/', // Available across the whole site
+    'domain' => '', // Default (useful for subdomains if needed)
+    'secure' => true, // Only send over HTTPS
+    'httponly' => true, // Prevent JavaScript access (XSS protection)
+    'samesite' => 'Strict' // CSRF protection (or 'Lax' for more flexibility)
+]);
 session_start();
 
 if (isset($_SESSION['user_id'])) {
