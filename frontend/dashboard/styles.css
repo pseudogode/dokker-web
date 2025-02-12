@@ -16,6 +16,13 @@
   align-items: center;
 }
 
+.main-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .footer {
   position: fixed;
   left: 0;
@@ -23,4 +30,44 @@
   width: 100%;
   text-align: center;
   border: 2px solid black;
+}
+
+/*
+Experimental styling:
+*/
+
+.container-prop {
+  margin: 8px;
+}
+
+.pill {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 20px;
+}
+
+.container-pill {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+.image {
+  margin-left: 10px;
+  color: #555;
+}
+
+.status {
+  margin-left: 10px;
+  font-size: 0.9em;
+  color: #007bff;
+}
+
+.running {
+  background-color: #d4edda;
+}
+
+.paused {
+  background-color: #f8d7da;
 }
