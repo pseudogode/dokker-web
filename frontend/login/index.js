@@ -13,7 +13,7 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
     showErrorMessage(formContainer, messageContainerId, message);
 
   try {
-    const res = await fetch('../../backend/login.php', {
+    const res = await fetch('../../backend/api/auth/login.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

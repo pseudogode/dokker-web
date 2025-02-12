@@ -21,7 +21,7 @@ const onRegisterSubmitHandler = (form, formContainer) => async (event) => {
 
   try {
     const { confirmPassword, ...rest } = formDataObject;
-    const res = await fetch('../../backend/register.php', {
+    const res = await fetch('../../backend/api/auth/register.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
