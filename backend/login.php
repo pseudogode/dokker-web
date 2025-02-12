@@ -40,7 +40,7 @@ $getUserStatement->store_result();
 if ($getUserStatement->num_rows == 0) {
     jsonResponse([
         'status' => ERROR,
-        'message' => 'User not found',
+        'message' => 'Invalid credentials',
     ], 400);
 }
 

@@ -52,7 +52,7 @@ try {
     if ($e->getCode() == 1062) { 
         jsonResponse([
             'status' => ERROR,
-            'message' => 'Username or email is taken'
+            'message' => 'Email is already registered'
         ], 400);
     } else {
         jsonResponse([

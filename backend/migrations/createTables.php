@@ -24,7 +24,7 @@ $connection->select_db($dbname);
 $usersTable = 'users';
 $table_sql = "CREATE TABLE IF NOT EXISTS $usersTable (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
+    username VARCHAR(50) NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,
     pass_hash VARCHAR(255) NOT NULL
 )";
