@@ -1,7 +1,5 @@
 import { showErrorMessage, parseJson } from '../shared/functions.js';
-
-const SUCCESS = 'success';
-const ERROR = 'error';
+import { API_AUTH_PREFIX, ERROR, SUCCESS } from '../shared/constants.js';
 
 const onSubmitHandler = (form, formContainer) => async (event) => {
   event.preventDefault();
@@ -13,7 +11,7 @@ const onSubmitHandler = (form, formContainer) => async (event) => {
     showErrorMessage(formContainer, messageContainerId, message);
 
   try {
-    const res = await fetch('../../backend/api/auth/login.php', {
+    const res = await fetch(`../../${API_AUTH_PREFIX}login.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

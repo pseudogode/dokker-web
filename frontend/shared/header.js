@@ -1,13 +1,12 @@
 import { parseJson } from './functions.js';
-
-const SUCCESS = 'success';
+import { SUCCESS, API_AUTH_PREFIX } from './constants.js';
 
 const renderLogOutButton = (navigationContainer) => {
   const logOutButton = document.createElement('button');
   logOutButton.textContent = 'Log out';
   logOutButton.addEventListener('click', async () => {
     try {
-      const res = await fetch('../../backend/logout.php', {
+      const res = await fetch(`../../${API_AUTH_PREFIX}logout.php`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -56,7 +55,7 @@ export const renderHeader = async (navigationContainerId) => {
   navigationContainer.classList.add('flex-container');
 
   try {
-    const res = await fetch('../../backend/status.php', {
+    const res = await fetch(`../../${API_AUTH_PREFIX}status.php`, {
       method: 'GET',
       credentials: 'include',
       headers: {

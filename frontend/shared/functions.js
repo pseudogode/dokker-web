@@ -41,7 +41,7 @@ export const parseJson = async (response) => {
   } catch (err) {
     console.error(err, text);
     throw new Error(
-      'Server response is not in json format'
+      'Response is not in json format'
     );
   }
 };
