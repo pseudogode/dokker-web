@@ -1,3 +1,25 @@
-.flex-container {
+.header-container {
   display: flex;
+  justify-content: start;
+  flex-direction: row-reverse;
+
+  border: 2px solid black;
+}
+
+.header-container > * {
+  margin: 8px;
+}
+
+.form-container {
+  display: block;
+  text-align: center;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  border: 2px solid black;
 }
