@@ -40,10 +40,11 @@ const renderContainerModalContent = (container) => {
   contentContainer.innerHTML = 
   ` <h5>Actions</h5>
     <button id="${copyButtonId}"># Copy id</button>
+    <h5>Info</h5>
     <p>State: ${State}</p>
     <p>Status: ${Status}</p>
     <p>Image: ${Image}</p> 
-    <p>Command: ${Command}<p>
+    <p>Command: "${Command}"<p>
     ${names.map((n) => `<p>${n}</p>`)}`;
 
   const copyButton = document.getElementById(copyButtonId);
@@ -54,8 +55,8 @@ const renderContainerModalContent = (container) => {
       console.error('Failed to copy clipboard');
     }
   });
+
   headerContainer.classList.add(`container-${mapContainerStateToClass(State)}`);
-  //
 };
 
 const renderContainersTable = (
