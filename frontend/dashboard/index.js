@@ -12,6 +12,7 @@ const CONTAINER_ACTIONS_PREFIX = 'container-actions';
 const CONTAINER_MODAL_ID = `${CONTAINER_ACTIONS_PREFIX}-modal`;
 const CONTAINER_MODAL_CLASS_NAME = CONTAINER_MODAL_ID;
 const CONTAINER_MODAL_CONTENT_CONTAINER_ID = `${CONTAINER_MODAL_ID}-content`;
+const CONTAINER_MODAL_HEADER_ID = `${CONTAINER_MODAL_ID}-header`;
 
 const openContainerModal = () => openModal(CONTAINER_MODAL_ID, CONTAINER_MODAL_CLASS_NAME);
 const closeContainerModal = () => closeModal(CONTAINER_MODAL_CLASS_NAME);
@@ -19,9 +20,19 @@ const closeContainerModal = () => closeModal(CONTAINER_MODAL_CLASS_NAME);
 const containerComparator = ({Created: Created1}, {Created: Created2} ) => Created1 - Created2;
 
 const renderContainerModalContent = (container) => {
-  console.log('container', container);
+  console.log('container', container); // FIXME: 
   const contentContainer = document.getElementById(CONTAINER_MODAL_CONTENT_CONTAINER_ID);
-  contentContainer.innerHTML=`<p>${container.Names[0]}</p`;
+
+  const headerContainer = document.getElementById(CONTAINER_MODAL_HEADER_ID);
+  
+  const [ name, ...names ] = container.Names;
+  headerContainer.innerHTML=`<h2>${name}</h2>`
+
+  contentContainer.innerHTML=`
+    <p>${container.State}</p
+    <p>${container.Status}</p
+    ${names.map(n => `<p>${n}`)}
+  `;
 }
 
 const renderContainersTable = (containers, containerElement, rowClass = null) => {
@@ -82,16 +93,11 @@ const renderDashboard = async () => {
     },
     () => {
       renderLogOutButton(navigationContainer);
-      mainSection.innerHTML = '<h1>Dashboard<h1>';
+      mainSection.innerHTML = '<h1>Containers<h1>';
       renderDContainersList(mainSection);
-      // FIXME: export in const && remove test button
-      const testButton = document.getElementById('test-button');
-
-      testButton.addEventListener('click', () => openContainerModal());
 
       const modalCloseButton = document.getElementById(`${CONTAINER_ACTIONS_PREFIX}-close-button`);
       modalCloseButton.addEventListener('click', () => closeContainerModal());
-      // EOF FIXME: 
     }
   );
 };
