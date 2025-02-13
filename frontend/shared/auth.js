@@ -44,5 +44,6 @@ export const fetchHandleUnauthorized = async (url, options, errorContainer = nul
     throw new Error(message ?? `[Internal server error] [Status: ${res.status}]`);
   } catch(err) {
     console.error(err);
+    throw(err);
   }
 }

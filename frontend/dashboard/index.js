@@ -140,7 +140,7 @@ const renderContainersTable = (
 };
 
 const renderDContainersList = async (containerElement) => {
-  const { containers } = await containerService.getAllContainers();
+  const { containers = null } = await containerService.getAllContainers() ?? {};
 
   if (!containers) return;
   containers.sort(containerComparator);
