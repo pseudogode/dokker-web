@@ -11,13 +11,5 @@ class Logger
             file_put_contents($fileName, $message, FILE_APPEND);
         }
         file_put_contents($fileName, '\n\n', FILE_APPEND);
-
-        // $data = [
-        //     "name" => "Alice",
-        //     "email" => "alice@example.com"
-        // ];
-        
-        // file_put_contents("data.json", json_encode($data, JSON_PRETTY_PRINT));
-
     }
 }
