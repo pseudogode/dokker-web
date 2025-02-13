@@ -12,7 +12,7 @@ class DockerClient
 
     public function getContainers(): array 
     {
-        $response = file_get_contents("{$this->url}containers/json?status=running");
+        $response = file_get_contents("{$this->url}containers/json?all=true");
 
         if ($response === false) {
             throw new Exception("Failed to retrieve containers from Docker API");
