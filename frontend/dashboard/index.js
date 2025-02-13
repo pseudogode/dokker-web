@@ -13,6 +13,7 @@ const CONTAINER_MODAL_ID = `${CONTAINER_ACTIONS_PREFIX}-modal`;
 const CONTAINER_MODAL_CLASS_NAME = CONTAINER_MODAL_ID;
 const CONTAINER_MODAL_CONTENT_CONTAINER_ID = `${CONTAINER_MODAL_ID}-content`;
 const CONTAINER_MODAL_HEADER_ID = `${CONTAINER_MODAL_ID}-header`;
+const CONTAINER_MODAL_HEADER_CLASS_NAME = CONTAINER_MODAL_HEADER_ID;
 
 /**
  *
@@ -128,7 +129,7 @@ const renderContainerModalContent = (container) => {
     ${names.map((n) => `<p>${n}</p>`)}
   `;
 
-  headerContainer.classList.add(`container-${mapContainerStateToClass(State)}`);
+  headerContainer.className = `container-${mapContainerStateToClass(State)} ${CONTAINER_MODAL_HEADER_CLASS_NAME}`;
 };
 
 const renderContainersTable = (
