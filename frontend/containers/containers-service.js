@@ -5,7 +5,7 @@ const URL = '../../backend/api/docker_api/containers.php';
 
 class ContainerService {
   async getAllContainers() {
-    const containers = await fetchHandleUnauthorized(URL, {
+    const data = await fetchHandleUnauthorized(URL, {
       method: 'GET',
       credentials: 'include',
       headers: {
@@ -13,7 +13,26 @@ class ContainerService {
       },
     });
 
-    return containers; // Container[]
+    return data; // { containers: Container[] }
+  }
+
+  async getContainerById(containerId) {
+    const data = await fetchHandleUnauthorized(
+      URL +
+        '?' +
+        new URLSearchParams({
+          containerId,
+        }),
+      {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    return data;
   }
 
   async triggerContainerOperation(containerId, operation) {
