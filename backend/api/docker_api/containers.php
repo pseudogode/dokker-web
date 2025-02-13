@@ -15,7 +15,7 @@ $dockerClient = new DockerClient();
 $bodyJSON = file_get_contents('php://input');
 $body = json_decode($bodyJSON, true);
 
-if (!$body['containerId'] || !$body['operation']) {
+if (!isset($body['containerId']) || !isset($body['operation'])) {
     jsonResponse([
         'status' => ERROR,
         'message' => 'Missing data',
@@ -66,7 +66,10 @@ switch ($operation) {
         break;
 
     default:
-        echo json_encode(["error" => "Invalid operation"]);
+        jsonResponse([
+            'status' => ERROR,
+            'message' => 'Invalid operation',
+        ], 400);
 }
 
 
