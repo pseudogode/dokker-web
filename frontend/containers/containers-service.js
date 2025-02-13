@@ -14,6 +14,20 @@ class ContainerService {
 
     return containers; // Container[]
   }
+
+  async triggerContainerOperation(containerId, operation) {
+     await fetchHandleUnauthorized(URL, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: {
+        containerId, 
+        operation
+      },
+    });
+  }
 }
 
 export const containerService = new ContainerService();

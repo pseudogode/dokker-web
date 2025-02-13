@@ -1,5 +1,5 @@
 import { renderRegisterAndLoginButtons, renderLogOutButton } from './header.js';
-import { authWrapper } from '../shared/auth.js';
+import { authWrapper, fetchHandleUnauthorized } from '../shared/auth.js';
 import { mapContainerStateToClass } from '../containers/container-utils.js';
 import { containerService } from '../containers/containers-service.js';
 
@@ -22,9 +22,8 @@ const containerComparator = ({ Created: Created1 }, { Created: Created2 }) =>
   Created1 - Created2;
 
 const renderContainerModalContent = (container) => {
+  console.log('currentContainer:', container);
   const copyButtonId = 'container-copy-id-button';
-  const startButtonId = 'container-start-button';
-  const stopButtonId = 'container-stop-button';
 
   const contentContainer = document.getElementById(
     CONTAINER_MODAL_CONTENT_CONTAINER_ID
@@ -41,27 +40,46 @@ const renderContainerModalContent = (container) => {
   const actionsContainer = document.createElement('div');
   contentContainer.innerHTML = '';
   contentContainer.appendChild(actionsContainer);
-  actionsContainer.innerHTML = '<h5>Actions</h5>'
+  actionsContainer.innerHTML = '<h5>Actions</h5>';
 
   const actionButtonsContainer = document.createElement('div');
   actionsContainer.appendChild(actionButtonsContainer);
   actionButtonsContainer.classList.add('actions-buttons-container');
-  actionButtonsContainer.innerHTML = 
-  ` <button id="${copyButtonId}"># Copy id</button>
-    <button id="${startButtonId}">\> Start</button>
-    <button id="${stopButtonId}">[] Stop</button>
-  `;
+  actionButtonsContainer.innerHTML = `<button id="${copyButtonId}"># Copy id</button>`;
 
-  const infoContainer = document.createElement('div');
-  contentContainer.appendChild(infoContainer);
-  infoContainer.innerHTML = 
-  ` <h5>Info</h5>
-    <p>State: ${State}</p>
-    <p>Status: ${Status}</p>
-    <p>Image: ${Image}</p> 
-    <p>Command: "${Command}"<p>
-    ${names.map((n) => `<p>${n}</p>`)}
-  `;
+  // const startButtonId = 'container-start-button';
+  const startButton = document.createElement('button');
+  startButton.innerText = '> Start';
+  if (State !== 'running') {
+    actionsContainer.appendChild(startButton);
+    startButton.addEventListener('click', async () => {
+      try {
+        await containerService.triggerContainerOperation(Id, 'start');
+        const { containers } =
+          (await containerService.getAllContainers()) ?? []; // FIXME: get current only
+        renderContainerModalContent(containers.find((c) => c.Id === Id));
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  // const stopButtonId = 'container-stop-button';
+  const stopButton = document.createElement('button');
+  stopButton.innerText = '[] Stop';
+  if (State === 'running') {
+    actionButtonsContainer.appendChild(stopButton);
+    stopButton.addEventListener('click', async () => {
+      try {
+        await containerService.triggerContainerOperation(Id, 'stop');
+        const { containers } =
+          (await containerService.getAllContainers()) ?? []; // FIXME: get current only
+        renderContainerModalContent(containers.find((c) => c.Id === Id));
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  }
 
   const copyButton = document.getElementById(copyButtonId);
   copyButton.addEventListener('click', () => {
@@ -71,6 +89,16 @@ const renderContainerModalContent = (container) => {
       console.error('Failed to copy clipboard');
     }
   });
+
+  const infoContainer = document.createElement('div');
+  contentContainer.appendChild(infoContainer);
+  infoContainer.innerHTML = ` <h5>Info</h5>
+    <p>State: ${State}</p>
+    <p>Status: ${Status}</p>
+    <p>Image: ${Image}</p> 
+    <p>Command: "${Command}"<p>
+    ${names.map((n) => `<p>${n}</p>`)}
+  `;
 
   headerContainer.classList.add(`container-${mapContainerStateToClass(State)}`);
 };
