@@ -7,8 +7,8 @@ session_start();
 $dockerClient = new DockerClient();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (isset($_GET['container_id'])) {
-        getContainerById($dockerClient, $_GET['container_id']);
+    if (isset($_GET['containerId'])) {
+        getContainerById($dockerClient, $_GET['containerId']);
     } else {
         getContainers($dockerClient);
     }
@@ -42,7 +42,7 @@ function getContainers($dockerClient)
 
 function getContainerById($dockerClient, $containerId)
 {
-    $container = $dockerClient->getContainerById(containerId);
+    $container = $dockerClient->getContainerById($containerId);
 
     if (!$container) {
         jsonResponse([

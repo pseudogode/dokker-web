@@ -1,5 +1,5 @@
 import { renderRegisterAndLoginButtons, renderLogOutButton } from './header.js';
-import { authWrapper, fetchHandleUnauthorized } from '../shared/auth.js';
+import { authWrapper } from '../shared/auth.js';
 import { mapContainerStateToClass } from '../containers/container-utils.js';
 import { containerService } from '../containers/containers-service.js';
 
@@ -14,22 +14,34 @@ const CONTAINER_MODAL_CLASS_NAME = CONTAINER_MODAL_ID;
 const CONTAINER_MODAL_CONTENT_CONTAINER_ID = `${CONTAINER_MODAL_ID}-content`;
 const CONTAINER_MODAL_HEADER_ID = `${CONTAINER_MODAL_ID}-header`;
 
+/**
+ *
+ * FIXME:
+ */
+
+const state = {
+  current: {
+    tableFocus: true,
+    modalFocus: false,
+  },
+};
+
+// EOF FIXME:
+
 const openContainerModal = () =>
-  openModal(CONTAINER_MODAL_ID, CONTAINER_MODAL_CLASS_NAME);
-const closeContainerModal = () => closeModal(CONTAINER_MODAL_CLASS_NAME);
+  openModal(CONTAINER_MODAL_ID, CONTAINER_MODAL_CLASS_NAME, () => { state.current = { modalFocus: true, tableFocus: false} });
+const closeContainerModal = () => closeModal(CONTAINER_MODAL_CLASS_NAME, () => { state.current = { modalFocus: false, tableFocus: true} });
 
 const containerComparator = ({ Created: Created1 }, { Created: Created2 }) =>
   Created1 - Created2;
 
 const renderContainerModalContent = (container) => {
   setTimeout(async () => {
+    if (!state.current.modalFocus) { return; } // FIXME: Ugly 
     try {
-      console.log('inside setTimeout');
       const { container: newContainer } =
         await containerService.getContainerById(container.Id);
-      if (JSON.stringify(newContainer) !== JSON.stringify(container)) {
-        renderContainerModalContent(newContainer);
-      }
+      renderContainerModalContent(newContainer);
     } catch (err) {
       console.error(err);
     }
@@ -45,11 +57,12 @@ const renderContainerModalContent = (container) => {
   contentContainer.innerHTML = '';
 
   const headerContainer = document.getElementById(CONTAINER_MODAL_HEADER_ID);
-  const { Id, Names, State, Status, Image, Command } = container;
-  const [name, ...names] = Names;
+  const { Id, Names, State, Status, Image, Command, Name } = container;
+  const ContainerName = Names?.[0] ?? Name;
+  const [_, ...names] = Names ?? [];
 
   headerContainer.innerHTML = `
-    <h2>${name}</h2>
+    <h2>${ContainerName}</h2>
   `;
 
   const actionsContainer = document.createElement('div');
@@ -157,49 +170,36 @@ const renderContainersTable = (
 
 const renderDContainersList = async (containerElement, containers) => {
   setTimeout(async () => {
+    if (!state.current.tableFocus) { renderDContainersList(containerElement, containers); return; } // FIXME: Ugly 
     try {
       const { containers: newContainers } =
         await containerService.getAllContainers();
-      if (
-        JSON.stringify(newContainers.sort()) !==
-        JSON.stringify(containers.sort())
-      ) {
-        renderDContainersList(containerElement, newContainers);
-      }
+      // if (
+      //   JSON.stringify(newContainers.sort()) !==
+      //   JSON.stringify(containers.sort())
+      // ) {
+      renderDContainersList(containerElement, newContainers);
     } catch (err) {
       console.error(err);
     }
   }, 5000);
 
   containerElement.innerHTML = '';
+  containers.sort(containerComparator);
 
-  try {
-    const { containers } = await containerService.getAllContainers();
+  const runningContainers = containers.filter(
+    ({ State }) => State === 'running'
+  );
+  const otherContainers = containers.filter(({ State }) => State !== 'running');
 
-    if (!containers) {
-      throw new Error('No "containers" key in in response json');
-    }
+  renderContainersTable(runningContainers, containerElement);
 
-    containers.sort(containerComparator);
-
-    const runningContainers = containers.filter(
-      ({ State }) => State === 'running'
-    );
-    const otherContainers = containers.filter(
-      ({ State }) => State !== 'running'
-    );
-
-    renderContainersTable(runningContainers, containerElement);
-
-    const otherContainersRowClass = 'faded';
-    renderContainersTable(
-      otherContainers,
-      containerElement,
-      otherContainersRowClass
-    );
-  } catch (err) {
-    console.error(err);
-  }
+  const otherContainersRowClass = 'faded';
+  renderContainersTable(
+    otherContainers,
+    containerElement,
+    otherContainersRowClass
+  );
 };
 
 const renderDashboard = async () => {
@@ -213,11 +213,20 @@ const renderDashboard = async () => {
       renderRegisterAndLoginButtons(navigationContainer);
       mainSection.innerHTML = '<h1>You are not logged in<h1>';
     },
-    () => {
+    async () => {
       renderLogOutButton(navigationContainer);
       mainSection.innerHTML = '<h1>Containers<h1>';
-      renderDContainersList(mainSection, []);
+      try {
+        const { containers } = await containerService.getAllContainers();
 
+        if (!containers) {
+          throw new Error('No "containers" key in in response json');
+        }
+
+        renderDContainersList(mainSection, containers);
+      } catch (err) {
+        console.error(err);
+      }
       const modalCloseButton = document.getElementById(
         `${CONTAINER_ACTIONS_PREFIX}-close-button`
       );
