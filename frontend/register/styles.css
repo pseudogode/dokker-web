@@ -1,13 +1,14 @@
-.header-container {
+.navigation-container {
   display: flex;
   justify-content: start;
   flex-direction: row-reverse;
 
   border: solid 1px #000;
   border-radius: 10px;
+  background-color: whitesmoke;
 }
 
-.header-container > * {
+.navigation-container > * {
   margin: 8px;
 }
 
@@ -30,4 +31,5 @@
   width: 100%;
   text-align: center;
   border: solid 1px #000;
+  background-color: whitesmoke;
 }

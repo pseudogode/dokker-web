@@ -5,6 +5,7 @@
 
   border: solid 1px #000;
   border-radius: 10px;
+  background-color: whitesmoke;
 }
 
 .navigation-container > * {
@@ -30,6 +31,7 @@
   bottom: 0;
   width: 100%;
   text-align: center;
+  background-color: whitesmoke;
   border: solid 1px #000;
 }
 
@@ -81,4 +83,38 @@
 
 .faded {
   opacity: 0.5;
+}
+/* MODAL STYLES
+-------------------------------*/
+.container-actions-modal {
+  /* modals are hidden by default */
+  display: none;
+
+  /* modal container fixed across whole screen */
+  position: fixed;
+  inset: 0;
+
+  /* z-index must be higher than everything else on the page */
+  z-index: 10000;
+  
+  /* semi-transparent black background exposed by padding */
+  background-color: rgba(0, 0, 0, .75);
+  padding: 40px;
+
+  /* enables scrolling for tall modals */
+  overflow: auto;
+}
+
+.container-actions-modal.open {
+  display: block;
+}
+
+.container-actions-modal-body {
+  padding: 20px;
+  background: #fff;
+}
+
+body.container-actions-modal-open {
+  /* body overflow is hidden to hide main scrollbar when modal window is open */
+  overflow: hidden;
 }

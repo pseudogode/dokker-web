@@ -10,3 +10,8 @@ export const parseJson = async (response) => {
     );
   }
 };
+
+export const stringToUuid = (str) => {
+  str = str.replace('-', '');
+  return 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx'.replace(/[x]/g, (_, p) => str[p % str.length]);
+}
