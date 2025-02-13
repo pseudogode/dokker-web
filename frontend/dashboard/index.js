@@ -6,17 +6,13 @@ import { containerService } from '../containers/containers-service.js';
 const NAVIGATION_CONTAINER_ID = 'navigation-container';
 const MAIN_SECTION_ID = 'main-section';
 
-const renderDContainersList = async (containerElement) => {
-  const { containers } = await containerService.getAllContainers();
-
-  if (!containers) return;
-
+const renderContainersTable = (containers, containerElement, rowClass = null) => {
   const table = document.createElement('table');
   table.classList.add('container-table');
 
   containers.map(({ Names, Image, State, Status }) => {
     const row = document.createElement('tr');
-    row.classList.add('container-row'); 
+    row.classList.add('container-row', rowClass); 
 
     const cells = [Names[0], Image, State, Status].map((text, index) => {
       const cell = document.createElement('td');
@@ -31,6 +27,20 @@ const renderDContainersList = async (containerElement) => {
   });
 
   containerElement.appendChild(table);
+};
+
+const renderDContainersList = async (containerElement) => {
+  const { containers } = await containerService.getAllContainers();
+
+  if (!containers) return;
+
+  const runningContainers = containers.filter(({ State }) => State === 'running');
+  const otherContainers = containers.filter(({ State }) => State !== 'running');
+
+  renderContainersTable(runningContainers, containerElement);
+
+  const otherContainersRowClass = 'faded';
+  renderContainersTable(otherContainers, containerElement, otherContainersRowClass);
 };
 
 const renderDashboard = async () => {
