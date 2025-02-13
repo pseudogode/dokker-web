@@ -3,14 +3,11 @@ require_once __DIR__ . '/../../utils/constants.php';
 require_once __DIR__ . '/../../utils/utils.php';
 require_once __DIR__ . '/DockerClient.php';
 
-// if ($_SERVER["REQUEST_METHOD"] != "POST") {
-//     jsonResponse([
-//       'status' => ERROR,
-//       'message' => 'Method not allowed',
-//     ], 400);
-// }
-
 $dockerClient = new DockerClient();
+
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    getContainers($dockerClient);
+}
 
 $bodyJSON = file_get_contents('php://input');
 $body = json_decode($bodyJSON, true);
@@ -26,7 +23,7 @@ $operation = $requestData['operation'];
 $userId = $_SESSION['user_id'];
 $connection = getDbConnection();
 
-function getContainers()
+function getContainers($dockerClient)
 {
     $result = $dockerClient->getContainers();
 
