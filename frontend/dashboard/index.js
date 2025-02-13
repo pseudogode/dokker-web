@@ -11,19 +11,27 @@ const renderDContainersList = async (containerElement) => {
 
   if (!containers) return;
 
-  containers.map(({Names, Id, Image, Status, State }) => {
-    const pill = document.createElement('div');
-    pill.classList.add('pill', 'container-pill');
-    pill.innerHTML = `
-      <strong class="container-prop">${Names[0]}</strong>
-      <span class="container-prop image">${Image}</span>
-      <span class="pill container-prop ${mapContainerStateToClass(State)}">${State}</span>
-      <span class="status container-prop">${Status}</span>
-    `;
+  const table = document.createElement('table');
+  table.classList.add('container-table');
 
-    containerElement.appendChild(pill);
+  containers.map(({ Names, Image, State, Status }) => {
+    const row = document.createElement('tr');
+    row.classList.add('container-row'); 
+
+    const cells = [Names[0], Image, State, Status].map((text, index) => {
+      const cell = document.createElement('td');
+      if (index === 2) { cell.classList.add(mapContainerStateToClass(text)) };
+      cell.textContent = text;
+      return cell;
+    });
+
+    cells.forEach((cell) => row.appendChild(cell));
+
+    table.appendChild(row);
   });
-}
+
+  containerElement.appendChild(table);
+};
 
 const renderDashboard = async () => {
   const navigationContainer = document.getElementById(NAVIGATION_CONTAINER_ID);
@@ -32,16 +40,16 @@ const renderDashboard = async () => {
   const mainSection = document.getElementById(MAIN_SECTION_ID);
 
   authWrapper(
-      () => {
-        renderRegisterAndLoginButtons(navigationContainer);
-        mainSection.innerHTML='<h1>You are not logged in<h1>';
-      },
-      () => {
-        renderLogOutButton(navigationContainer);
-        mainSection.innerHTML='<h1>Dashboard<h1>';
-        renderDContainersList(mainSection);
-      },
+    () => {
+      renderRegisterAndLoginButtons(navigationContainer);
+      mainSection.innerHTML = '<h1>You are not logged in<h1>';
+    },
+    () => {
+      renderLogOutButton(navigationContainer);
+      mainSection.innerHTML = '<h1>Dashboard<h1>';
+      renderDContainersList(mainSection);
+    }
   );
-}
+};
 
 await renderDashboard();

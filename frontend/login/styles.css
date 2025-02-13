@@ -3,7 +3,8 @@
   justify-content: start;
   flex-direction: row-reverse;
 
-  border: 2px solid black;
+  border: solid 1px #000;
+  border-radius: 10px;
 }
 
 .header-container > * {
@@ -28,5 +29,5 @@
   bottom: 0;
   width: 100%;
   text-align: center;
-  border: 2px solid black;
+  border: solid 1px #000;
 }
