@@ -11,8 +11,8 @@ export const mapContainerStateToClass = (state) => {
   switch(state) {
     case 'running':
       return 'running';
-    case 'paused':
-      return 'paused';
+    case 'exited':
+      return 'exited';
     default:
       return 'neutral';
   }

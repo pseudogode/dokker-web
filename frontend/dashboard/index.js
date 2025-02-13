@@ -14,34 +14,61 @@ const CONTAINER_MODAL_CLASS_NAME = CONTAINER_MODAL_ID;
 const CONTAINER_MODAL_CONTENT_CONTAINER_ID = `${CONTAINER_MODAL_ID}-content`;
 const CONTAINER_MODAL_HEADER_ID = `${CONTAINER_MODAL_ID}-header`;
 
-const openContainerModal = () => openModal(CONTAINER_MODAL_ID, CONTAINER_MODAL_CLASS_NAME);
+const openContainerModal = () =>
+  openModal(CONTAINER_MODAL_ID, CONTAINER_MODAL_CLASS_NAME);
 const closeContainerModal = () => closeModal(CONTAINER_MODAL_CLASS_NAME);
 
-const containerComparator = ({Created: Created1}, {Created: Created2} ) => Created1 - Created2;
+const containerComparator = ({ Created: Created1 }, { Created: Created2 }) =>
+  Created1 - Created2;
 
 const renderContainerModalContent = (container) => {
-  console.log('container', container); // FIXME: 
-  const contentContainer = document.getElementById(CONTAINER_MODAL_CONTENT_CONTAINER_ID);
+  console.log('container', container); // FIXME:
+  const contentContainer = document.getElementById(
+    CONTAINER_MODAL_CONTENT_CONTAINER_ID
+  );
 
   const headerContainer = document.getElementById(CONTAINER_MODAL_HEADER_ID);
-  
-  const [ name, ...names ] = container.Names;
-  headerContainer.innerHTML=`<h2>${name}</h2>`
+  const { Id, Names, State, Status, Image, Command } = container;
+  const [name, ...names] = Names;
 
-  contentContainer.innerHTML=`
-    <p>${container.State}</p
-    <p>${container.Status}</p
-    ${names.map(n => `<p>${n}`)}
+  headerContainer.innerHTML = `
+    <h2>${name}</h2>
   `;
-}
 
-const renderContainersTable = (containers, containerElement, rowClass = null) => {
+  const copyButtonId = 'container-copy-id-button';
+
+  contentContainer.innerHTML = 
+  ` <h5>Actions</h5>
+    <button id="${copyButtonId}"># Copy id</button>
+    <p>State: ${State}</p>
+    <p>Status: ${Status}</p>
+    <p>Image: ${Image}</p> 
+    <p>Command: ${Command}<p>
+    ${names.map((n) => `<p>${n}</p>`)}`;
+
+  const copyButton = document.getElementById(copyButtonId);
+  copyButton.addEventListener('click', () => {
+    try {
+      navigator.clipboard.writeText(Id);
+    } catch (err) {
+      console.error('Failed to copy clipboard');
+    }
+  });
+  headerContainer.classList.add(`container-${mapContainerStateToClass(State)}`);
+  //
+};
+
+const renderContainersTable = (
+  containers,
+  containerElement,
+  rowClass = null
+) => {
   const table = document.createElement('table');
   table.classList.add('container-table');
 
   containers.map((container) => {
     const row = document.createElement('tr');
-    row.classList.add('container-row', rowClass); 
+    row.classList.add('container-row', rowClass);
 
     row.addEventListener('click', () => {
       renderContainerModalContent(container);
@@ -52,7 +79,9 @@ const renderContainersTable = (containers, containerElement, rowClass = null) =>
 
     const cells = [Names[0], Image, State, Status].map((text, index) => {
       const cell = document.createElement('td');
-      if (index === 2) { cell.classList.add(mapContainerStateToClass(text)) };
+      if (index === 2) {
+        cell.classList.add(`container-${mapContainerStateToClass(text)}`);
+      }
       cell.textContent = text;
       return cell;
     });
@@ -71,13 +100,19 @@ const renderDContainersList = async (containerElement) => {
   if (!containers) return;
   containers.sort(containerComparator);
 
-  const runningContainers = containers.filter(({ State }) => State === 'running');
+  const runningContainers = containers.filter(
+    ({ State }) => State === 'running'
+  );
   const otherContainers = containers.filter(({ State }) => State !== 'running');
 
   renderContainersTable(runningContainers, containerElement);
 
   const otherContainersRowClass = 'faded';
-  renderContainersTable(otherContainers, containerElement, otherContainersRowClass);
+  renderContainersTable(
+    otherContainers,
+    containerElement,
+    otherContainersRowClass
+  );
 };
 
 const renderDashboard = async () => {
@@ -96,7 +131,9 @@ const renderDashboard = async () => {
       mainSection.innerHTML = '<h1>Containers<h1>';
       renderDContainersList(mainSection);
 
-      const modalCloseButton = document.getElementById(`${CONTAINER_ACTIONS_PREFIX}-close-button`);
+      const modalCloseButton = document.getElementById(
+        `${CONTAINER_ACTIONS_PREFIX}-close-button`
+      );
       modalCloseButton.addEventListener('click', () => closeContainerModal());
     }
   );
