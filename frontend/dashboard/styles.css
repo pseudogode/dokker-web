@@ -127,6 +127,10 @@
   background: #fff;
 }
 
+actions-buttons-container {
+  display: flex;
+}
+
 body.container-actions-modal-open {
   overflow: hidden;
 }
