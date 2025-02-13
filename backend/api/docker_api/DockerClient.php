@@ -29,6 +29,19 @@ class DockerClient
         return $containers;
     }
 
+    public function getContainerById(string $containerId): ?array
+    {
+        $response = file_get_contents("{$this->url}containers/{$containerId}/json");
+
+        if ($response === false) {
+            return null;
+        }
+
+        $container = json_decode($response, true);
+
+        return $container;
+    }
+
     public function startContainer(string $containerId): bool 
     {
         return $this->sendDockerRequest($containerId, 'start');
