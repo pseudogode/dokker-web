@@ -27,7 +27,7 @@ export const renderLogOutButton = (navigationContainer) => {
       console.error(e?.message ?? 'Error during logout');
     }
 
-    location.reload();
+    setTimeout(() => location.reload(), 2000);
   });
 
   navigationContainer.appendChild(logOutButton);

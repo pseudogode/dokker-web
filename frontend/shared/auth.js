@@ -37,7 +37,7 @@ export const fetchHandleUnauthorized = async (url, options, errorContainer = nul
     }
 
     if (res.status === 401) {
-      location.reload();
+      setTimeout(() => location.reload(), 2000);
       throw new Error('Unauthorized');
     }
 
