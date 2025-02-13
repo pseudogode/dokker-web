@@ -7,15 +7,15 @@ session_start();
 $dockerClient = new DockerClient();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    getContainers($dockerClient);
+    if (isset($_GET['container_id'])) {
+        getContainerById($dockerClient, $_GET['container_id']);
+    } else {
+        getContainers($dockerClient);
+    }
 }
 
 $bodyJSON = file_get_contents('php://input');
 $body = json_decode($bodyJSON, true);
-
-if (isset($body['containerId']) && !isset($body['operation'])) {
-    getContainerById($dockerClient, $body['containerId']);
-}
 
 if (!isset($body['containerId']) || !isset($body['operation'])) {
     jsonResponse([
