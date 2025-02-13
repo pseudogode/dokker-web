@@ -3,6 +3,17 @@ import { parseJson } from '../shared/utils.js';
 
 const URL = '../../backend/api/docker_api/containers.php';
 
+const mapSimpleContainerObject = (container) => {
+  return {
+    ...container, 
+    Names: [container.Name],
+    State: container.State.Status,
+    Status: container.State.Status === 'running' ? `PID: ${container.State.Pid}` : `ExitCode: ${container.State.ExitCode ?? container.State.Status}`,
+    Image: container.Config.Image,
+    Command: container.Config.Cmd.join(', '),
+  }
+}
+
 class ContainerService {
   async getAllContainers() {
     const data = await fetchHandleUnauthorized(URL, {
@@ -32,7 +43,7 @@ class ContainerService {
       }
     );
 
-    return data;
+    return { ...data, container: !!data?.container ? mapSimpleContainerObject(data.container) : undefined };
   }
 
   async triggerContainerOperation(containerId, operation) {
