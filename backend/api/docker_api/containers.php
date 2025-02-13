@@ -27,13 +27,15 @@ function getContainers($dockerClient)
 {
     $result = $dockerClient->getContainers();
 
+    //filter by owned containers
+
     jsonResponse([
         'status' => SUCCESS,
         'containers' => $result,
     ]);
 }
 
-function getContainerById($connection, $containerId, $userId) {
+function getContainerByIdAndOwner($connection, $containerId, $userId) {
     $sql = "SELECT * FROM containers WHERE container_id = ? AND user_id = ?";
     $statement = $connection->prepare($sql);
     $statement->bind_param("si", $containerId, $userId);
@@ -44,7 +46,7 @@ function getContainerById($connection, $containerId, $userId) {
     return $container ?: null;
 }
 
-$container = getContainerById($connection, $containerId, $userId);
+$container = getContainerByIdAndOwner($connection, $containerId, $userId);
 // if (!$container) {
 //     die(json_encode(["error" => "Container not found"]));
 // }
