@@ -24,15 +24,16 @@ const containerComparator = ({ Created: Created1 }, { Created: Created2 }) =>
 const renderContainerModalContent = (container) => {
   setTimeout(async () => {
     try {
-      console.log('inside setTimeout')
-      const { container: newContainer } = await containerService.getContainerById(container.Id);
+      console.log('inside setTimeout');
+      const { container: newContainer } =
+        await containerService.getContainerById(container.Id);
       if (JSON.stringify(newContainer) !== JSON.stringify(container)) {
         renderContainerModalContent(newContainer);
       }
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
-  }, 5000);
+  }, 2000);
 
   console.log('currentContainer:', container);
   const copyButtonId = 'container-copy-id-button';
@@ -123,6 +124,7 @@ const renderContainersTable = (
   rowClass = null
 ) => {
   const table = document.createElement('table');
+  table.innerHTML = '';
   table.classList.add('container-table');
 
   containers.map((container) => {
@@ -153,25 +155,51 @@ const renderContainersTable = (
   containerElement.appendChild(table);
 };
 
-const renderDContainersList = async (containerElement) => {
-  const { containers = null } = await containerService.getAllContainers() ?? {};
+const renderDContainersList = async (containerElement, containers) => {
+  setTimeout(async () => {
+    try {
+      const { containers: newContainers } =
+        await containerService.getAllContainers();
+      if (
+        JSON.stringify(newContainers.sort()) !==
+        JSON.stringify(containers.sort())
+      ) {
+        renderDContainersList(containerElement, newContainers);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, 5000);
 
-  if (!containers) return;
-  containers.sort(containerComparator);
+  containerElement.innerHTML = '';
 
-  const runningContainers = containers.filter(
-    ({ State }) => State === 'running'
-  );
-  const otherContainers = containers.filter(({ State }) => State !== 'running');
+  try {
+    const { containers } = await containerService.getAllContainers();
 
-  renderContainersTable(runningContainers, containerElement);
+    if (!containers) {
+      throw new Error('No "containers" key in in response json');
+    }
 
-  const otherContainersRowClass = 'faded';
-  renderContainersTable(
-    otherContainers,
-    containerElement,
-    otherContainersRowClass
-  );
+    containers.sort(containerComparator);
+
+    const runningContainers = containers.filter(
+      ({ State }) => State === 'running'
+    );
+    const otherContainers = containers.filter(
+      ({ State }) => State !== 'running'
+    );
+
+    renderContainersTable(runningContainers, containerElement);
+
+    const otherContainersRowClass = 'faded';
+    renderContainersTable(
+      otherContainers,
+      containerElement,
+      otherContainersRowClass
+    );
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const renderDashboard = async () => {
@@ -188,7 +216,7 @@ const renderDashboard = async () => {
     () => {
       renderLogOutButton(navigationContainer);
       mainSection.innerHTML = '<h1>Containers<h1>';
-      renderDContainersList(mainSection);
+      renderDContainersList(mainSection, []);
 
       const modalCloseButton = document.getElementById(
         `${CONTAINER_ACTIONS_PREFIX}-close-button`
