@@ -13,6 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 $bodyJSON = file_get_contents('php://input');
 $body = json_decode($bodyJSON, true);
 
+if (isset($body['containerId']) && !isset($body['operation'])) {
+    getContainerById($dockerClient, $body['containerId']);
+}
+
 if (!isset($body['containerId']) || !isset($body['operation'])) {
     jsonResponse([
         'status' => ERROR,
@@ -36,6 +40,23 @@ function getContainers($dockerClient)
     ]);
 }
 
+function getContainerById($dockerClient, $containerId)
+{
+    $container = $dockerClient->getContainerById(containerId);
+
+    if (!$container) {
+        jsonResponse([
+            'status' => ERROR,
+            'message' => 'Container not found',
+        ], 404);
+    }
+
+    jsonResponse([
+        'status' => SUCCESS,
+        'container' => $container,
+    ]);
+}
+
 function getContainerByIdAndOwner($connection, $containerId, $userId) {
     $sql = "SELECT * FROM containers WHERE container_id = ? AND user_id = ?";
     $statement = $connection->prepare($sql);
@@ -55,10 +76,16 @@ $container = getContainerByIdAndOwner($connection, $containerId, $userId);
 switch ($operation) {
     case "start":
         $dockerClient->startContainer($containerId);
+        jsonResponse([
+            'status' => SUCCESS,
+        ]);
         break;
 
     case "stop":
         $dockerClient->stopContainer($containerId);
+        jsonResponse([
+            'status' => SUCCESS,
+        ]);
         break;
 
     case "delete":
