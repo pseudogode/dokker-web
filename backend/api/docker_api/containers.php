@@ -23,10 +23,31 @@ if (!isset($body['containerId']) || !isset($body['operation'])) {
         'message' => 'Missing data',
     ], 400);
 }
-$containerId = $body['containerId'];
-$operation = $body['operation'];
-$userId = $_SESSION['user_id'];
-$connection = getDbConnection();
+
+if (isset($body['containerId']) && isset($body['operation']) && $body['operation'] == "start") {
+
+    $dockerClient->startContainer($body['containerId']);
+    jsonResponse([
+        'status' => SUCCESS,
+    ]);
+}
+
+if (isset($body['containerId']) && isset($body['operation']) && $body['operation'] == "stop") {
+
+    $dockerClient->stopContainer($body['containerId']);
+    jsonResponse([
+        'status' => SUCCESS,
+    ]);
+}
+
+if (isset($body['operation']) && $body['operation'] == "create") {
+
+    $dockerClient->createContainer($containerId);
+    jsonResponse([
+        'status' => SUCCESS,
+    ]);
+}
+
 
 function getContainers($dockerClient)
 {
@@ -68,37 +89,12 @@ function getContainerByIdAndOwner($connection, $containerId, $userId) {
     return $container ?: null;
 }
 
+$userId = $_SESSION['user_id'];
+$connection = getDbConnection();
+
 $container = getContainerByIdAndOwner($connection, $containerId, $userId);
 // if (!$container) {
 //     die(json_encode(["error" => "Container not found"]));
 // }
-
-switch ($operation) {
-    case "start":
-        $dockerClient->startContainer($containerId);
-        jsonResponse([
-            'status' => SUCCESS,
-        ]);
-        break;
-
-    case "stop":
-        $dockerClient->stopContainer($containerId);
-        jsonResponse([
-            'status' => SUCCESS,
-        ]);
-        break;
-
-    case "delete":
-        //
-        break;
-
-    default:
-        jsonResponse([
-            'status' => ERROR,
-            'message' => 'Invalid operation',
-        ], 400);
-}
-
-
 
 
