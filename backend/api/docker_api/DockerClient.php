@@ -41,7 +41,7 @@ class DockerClient
 
     private function sendDockerRequest(string $containerId, string $action): bool 
     {
-        $url = "{$this->url}/containers/{$containerId}/{$action}";
+        $url = "{$this->url}containers/{$containerId}/{$action}";
         $context = stream_context_create([
             'http' => [
                 'method'  => 'POST',
