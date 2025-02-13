@@ -22,7 +22,10 @@ const containerComparator = ({ Created: Created1 }, { Created: Created2 }) =>
   Created1 - Created2;
 
 const renderContainerModalContent = (container) => {
-  console.log('container', container); // FIXME:
+  const copyButtonId = 'container-copy-id-button';
+  const startButtonId = 'container-start-button';
+  const stopButtonId = 'container-stop-button';
+
   const contentContainer = document.getElementById(
     CONTAINER_MODAL_CONTENT_CONTAINER_ID
   );
@@ -35,17 +38,30 @@ const renderContainerModalContent = (container) => {
     <h2>${name}</h2>
   `;
 
-  const copyButtonId = 'container-copy-id-button';
+  const actionsContainer = document.createElement('div');
+  contentContainer.innerHTML = '';
+  contentContainer.appendChild(actionsContainer);
+  actionsContainer.innerHTML = '<h5>Actions</h5>'
 
-  contentContainer.innerHTML = 
-  ` <h5>Actions</h5>
-    <button id="${copyButtonId}"># Copy id</button>
-    <h5>Info</h5>
+  const actionButtonsContainer = document.createElement('div');
+  actionsContainer.appendChild(actionButtonsContainer);
+  actionButtonsContainer.classList.add('actions-buttons-container');
+  actionButtonsContainer.innerHTML = 
+  ` <button id="${copyButtonId}"># Copy id</button>
+    <button id="${startButtonId}">\> Start</button>
+    <button id="${stopButtonId}">[] Stop</button>
+  `;
+
+  const infoContainer = document.createElement('div');
+  contentContainer.appendChild(infoContainer);
+  infoContainer.innerHTML = 
+  ` <h5>Info</h5>
     <p>State: ${State}</p>
     <p>Status: ${Status}</p>
     <p>Image: ${Image}</p> 
     <p>Command: "${Command}"<p>
-    ${names.map((n) => `<p>${n}</p>`)}`;
+    ${names.map((n) => `<p>${n}</p>`)}
+  `;
 
   const copyButton = document.getElementById(copyButtonId);
   copyButton.addEventListener('click', () => {
