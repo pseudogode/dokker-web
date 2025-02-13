@@ -22,12 +22,26 @@ const containerComparator = ({ Created: Created1 }, { Created: Created2 }) =>
   Created1 - Created2;
 
 const renderContainerModalContent = (container) => {
+  setTimeout(async () => {
+    try {
+      console.log('inside setTimeout')
+      const { container: newContainer } = await containerService.getContainerById(container.Id);
+      if (JSON.stringify(newContainer) !== JSON.stringify(container)) {
+        renderContainerModalContent(newContainer);
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  }, 5000);
+
   console.log('currentContainer:', container);
   const copyButtonId = 'container-copy-id-button';
 
   const contentContainer = document.getElementById(
     CONTAINER_MODAL_CONTENT_CONTAINER_ID
   );
+
+  contentContainer.innerHTML = '';
 
   const headerContainer = document.getElementById(CONTAINER_MODAL_HEADER_ID);
   const { Id, Names, State, Status, Image, Command } = container;
