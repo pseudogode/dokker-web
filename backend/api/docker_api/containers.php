@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../utils/constants.php';
 require_once __DIR__ . '/../../utils/utils.php';
 require_once __DIR__ . '/DockerClient.php';
 
+session_start();
 $dockerClient = new DockerClient();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
@@ -18,8 +19,8 @@ if (!isset($body['containerId']) || !isset($body['operation'])) {
         'message' => 'Missing data',
     ], 400);
 }
-$containerId = $requestData['containerId'];
-$operation = $requestData['operation'];
+$containerId = $body['containerId'];
+$operation = $body['operation'];
 $userId = $_SESSION['user_id'];
 $connection = getDbConnection();
 
