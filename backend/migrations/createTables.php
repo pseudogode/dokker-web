@@ -6,7 +6,16 @@ $config = include __DIR__ . '/../configurations/DBconfig.php';
 
 $dbname = $config['dbname'];
 
-$connection = new mysqli($config['servername'], $config['username'], $config['password']);
+$servername = getenv('DB_HOST') ?: 'db';   // Docker service name
+$username   = 'root';                       // matches MYSQL_ROOT_PASSWORD
+$password   = 'root';                       // matches MYSQL_ROOT_PASSWORD
+$dbname     = $config['dbname'];
+
+$connection = new mysqli($servername, $username, $password);
+
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+}
 
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);

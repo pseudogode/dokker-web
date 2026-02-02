@@ -5,8 +5,8 @@ require_once __DIR__ . '/DockerClient.php';
 
 session_start();
 $dockerClient = new DockerClient();
-$userId = $_SESSION['user_id'];
-$connection = getDbConnection();
+// $userId = $_SESSION['user_id'];
+// $connection = getDbConnection();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_GET['containerId'])) {

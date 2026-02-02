@@ -1,7 +1,7 @@
 <?php
 return [
-    'servername' => 'localhost',
+    'servername' => 'db',
     'username' => 'root',
-    'password' => '',
+    'password' => 'root',
     'dbname' => 'web_docker_interface'
 ];
