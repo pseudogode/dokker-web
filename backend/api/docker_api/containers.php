@@ -5,6 +5,8 @@ require_once __DIR__ . '/DockerClient.php';
 
 session_start();
 $dockerClient = new DockerClient();
+$userId = $_SESSION['user_id'];
+$connection = getDbConnection();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (isset($_GET['containerId'])) {
@@ -43,6 +45,17 @@ if (isset($body['containerId']) && isset($body['operation']) && $body['operation
 if (isset($body['operation']) && $body['operation'] == "create") {
 
     $dockerClient->createContainer($containerId);
+
+    // $query = "INSERT INTO containers (container_id, user_id) VALUES (?, ?)";
+    // $statement = $connection->prepare($query);
+    // $statement->bind_param("ss", $email, $username, $hashedPassword);
+    // if (! $statement->execute()) {
+    //     jsonResponse([
+    //         'status' => ERROR,
+    //         "message" => "Error creating user"
+    //     ], 500);
+    // }
+    
     jsonResponse([
         'status' => SUCCESS,
     ]);
@@ -89,12 +102,8 @@ function getContainerByIdAndOwner($connection, $containerId, $userId) {
     return $container ?: null;
 }
 
-$userId = $_SESSION['user_id'];
-$connection = getDbConnection();
-
 $container = getContainerByIdAndOwner($connection, $containerId, $userId);
 // if (!$container) {
 //     die(json_encode(["error" => "Container not found"]));
 // }
-
 

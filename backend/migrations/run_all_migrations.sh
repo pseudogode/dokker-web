@@ -2,17 +2,18 @@
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+PHP=php
+
 dropDatabaseFile="dropDatabase.php"
+
 echo "Executing: $dropDatabaseFile"
-/opt/lampp/bin/php "$dropDatabaseFile"
+$PHP "$DIR/$dropDatabaseFile"
 
 for file in "$DIR"/*.php; do
-    case $file in 
-      *$dropDatabaseFile) continue;;
-    esac
+  case "$file" in
+    *"$dropDatabaseFile") continue ;;
+  esac
 
-    if [ -f "$file" ]; then
-        echo "Executing: $file"
-        /opt/lampp/bin/php "$file"
-    fi
+  echo "Executing: $file"
+  $PHP "$file"
 done
